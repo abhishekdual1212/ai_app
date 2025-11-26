@@ -1,0 +1,58 @@
+.query-component {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+}
+
+.query-component h2 {
+    margin-top: 0;
+    color: #333;
+}
+
+.query-component form {
+    display: flex;
+    flex-direction: column;
+}
+
+.query-component textarea {
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+    font-family: sans-serif;
+    resize: vertical;
+}
+
+.query-component button {
+    padding: 10px 15px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    align-self: flex-start;
+}
+
+.query-component button:disabled {
+    background-color: #cccccc;
+}
+
+.response-area, .error-area {
+    margin-top: 15px;
+    padding: 15px;
+    border-radius: 4px;
+}
+
+.response-area {
+    background-color: #e9f7ef;
+    border: 1px solid #a9d6b8;
+}
+
+.error-area {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+}

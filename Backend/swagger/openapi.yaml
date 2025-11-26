@@ -1,0 +1,345 @@
+openapi: 3.1.0
+info:
+  title: Abyd Backend API
+  version: 1.0.0
+  description: >
+    API docs for the Abyd backend.  
+    This document covers the **UserStart** (user onboard profile) endpoints used by the Admin UI.
+
+servers:
+  - url: http://localhost:3000
+    description: Local dev
+
+tags:
+  - name: UserStart
+    description: Store & retrieve user onboard profile (brand name / phone, etc.)
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+      description: Static API key header.
+    BasicAuth:
+      type: http
+      scheme: basic
+      description: Admin-only endpoints require HTTP Basic in addition to x-api-key.
+
+  schemas:
+    UserStart:
+      type: object
+      additionalProperties: false
+      properties:
+        uid:
+          type: string
+          description: Firebase UID (primary key)
+          example: "kU7k9sP3thc1"
+        email:
+          type: string
+          format: email
+          nullable: true
+          example: "founder@example.com"
+        displayName:
+          type: string
+          nullable: true
+          example: "Abyd Founder"
+        brandName:
+          type: string
+          nullable: true
+          description: Canonical stored field for brandname
+          example: "Acme Foods"
+        phNo:
+          type: string
+          nullable: true
+          description: Canonical stored field for phone (10 digits)
+          example: "9876543210"
+        lastLoginAt:
+          type: string
+          format: date-time
+          nullable: true
+          example: "2025-10-24T09:41:13.000Z"
+        createdAt:
+          type: string
+          format: date-time
+          example: "2025-10-24T09:41:13.000Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2025-10-24T09:52:42.000Z"
+      required: [ uid, createdAt, updatedAt ]
+
+    UserStartListResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserStart'
+        total:
+          type: integer
+          example: 2
+        page:
+          type: integer
+          example: 1
+        pageSize:
+          type: integer
+          example: 50
+
+    UserStartResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          $ref: '#/components/schemas/UserStart'
+
+    UserStartUpdateRequest:
+      type: object
+      description: >
+        Accepts client aliases and maps them to canonical fields:
+
+        - `brandname` → `brandName`  
+        - `phone` → `phNo`
+      additionalProperties: false
+      properties:
+        brandname:
+          type: string
+          nullable: true
+          example: "Acme Foods"
+        phone:
+          type: string
+          nullable: true
+          example: "9876543210"
+
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: "Not found"
+
+paths:
+  /api/userstart:
+    get:
+      tags: [UserStart]
+      summary: List UserStart profiles (admin)
+      description: |
+        Returns paginated UserStart records.  
+        Requires **both** x-api-key and Basic auth.
+      security:
+        - ApiKeyAuth: {}
+          BasicAuth: {}
+      parameters:
+        - in: query
+          name: q
+          schema:
+            type: string
+          description: Optional search by name/email/uid (contains)
+        - in: query
+          name: page
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - in: query
+          name: pageSize
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 200
+            default: 50
+        - in: query
+          name: sort
+          schema:
+            type: string
+            enum: [recent, alpha]
+            default: recent
+          description: |
+            `recent` = updatedAt desc,  
+            `alpha` = displayName asc (fallback email/uid).
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserStartListResponse'
+              examples:
+                ok:
+                  value:
+                    success: true
+                    data:
+                      - uid: "kU7k9sP3thc1"
+                        email: "founder@example.com"
+                        displayName: "Abyd Founder"
+                        brandName: "Acme Foods"
+                        phNo: "9876543210"
+                        lastLoginAt: "2025-10-24T09:41:13.000Z"
+                        createdAt: "2025-10-24T09:41:13.000Z"
+                        updatedAt: "2025-10-24T09:52:42.000Z"
+                      - uid: "b2YpQw91Zx"
+                        email: "ops@example.com"
+                        displayName: "Operations"
+                        brandName: null
+                        phNo: null
+                        lastLoginAt: null
+                        createdAt: "2025-09-11T10:02:00.000Z"
+                        updatedAt: "2025-10-01T16:21:45.000Z"
+                    total: 2
+                    page: 1
+                    pageSize: 50
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+
+    post:
+      tags: [UserStart]
+      summary: Create a UserStart (admin)
+      description: |
+        Creates a new UserStart record.  
+        Requires **both** x-api-key and Basic auth.
+      security:
+        - ApiKeyAuth: {}
+          BasicAuth: {}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [uid]
+              properties:
+                uid:
+                  type: string
+                  example: "kU7k9sP3thc1"
+                email:
+                  type: string
+                  format: email
+                  nullable: true
+                displayName:
+                  type: string
+                  nullable: true
+                brandname:
+                  type: string
+                  nullable: true
+                phone:
+                  type: string
+                  nullable: true
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/UserStartResponse' }
+        "409":
+          description: Already exists
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+
+  /api/userstart/{userid}:
+    get:
+      tags: [UserStart]
+      summary: Get UserStart by userid (frontend/admin)
+      description: |
+        Returns the userstart profile for a Firebase **uid**.  
+        Requires **x-api-key**. Basic auth is optional.
+      security:
+        - ApiKeyAuth: {}
+      parameters:
+        - in: path
+          name: userid
+          required: true
+          schema: { type: string }
+          description: Firebase UID
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/UserStartResponse' }
+              examples:
+                ok:
+                  value:
+                    success: true
+                    data:
+                      uid: "kU7k9sP3thc1"
+                      email: "founder@example.com"
+                      displayName: "Abyd Founder"
+                      brandName: "Acme Foods"
+                      phNo: "9876543210"
+                      createdAt: "2025-10-24T09:41:13.000Z"
+                      updatedAt: "2025-10-24T09:52:42.000Z"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+
+    patch:
+      tags: [UserStart]
+      summary: Update brand/phone for userid (frontend/admin)
+      description: |
+        Partial update for a user’s profile.  
+        Accepts `brandname` and/or `phone` (aliases) and maps to stored `brandName` / `phNo`.  
+        Requires **x-api-key** (Basic optional).
+      security:
+        - ApiKeyAuth: {}
+      parameters:
+        - in: path
+          name: userid
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/UserStartUpdateRequest' }
+            examples:
+              updateBoth:
+                value: { brandname: "Acme Foods", phone: "9876543210" }
+              updateBrandOnly:
+                value: { brandname: "New Brand" }
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/UserStartResponse' }
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+
+    delete:
+      tags: [UserStart]
+      summary: Delete UserStart by userid (admin)
+      description: >
+        Deletes a profile. Requires **both** x-api-key and Basic auth.
+      security:
+        - ApiKeyAuth: {}
+          BasicAuth: {}
+      parameters:
+        - in: path
+          name: userid
+          required: true
+          schema: { type: string }
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }

@@ -1,0 +1,206 @@
+# ---------------------------
+# Node / JS / TS
+# ---------------------------
+node_modules/
+*/node_modules/
+**/node_modules/
+ 
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+ 
+coverage/
+*.lcov
+.nyc_output
+ 
+.grunt
+bower_components
+.lock-wscript
+build/Release
+jspm_packages/
+ 
+# Caches
+.cache
+.parcel-cache
+.eslintcache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+.rts2_cache_umd/
+*.tsbuildinfo
+.node_repl_history
+.yarn-integrity
+.npm
+ 
+# Framework outputs
+.next
+.nuxt
+dist
+public
+.out
+.storybook-out
+ 
+# Common project outputs
+frontend/dist/
+frontend/build/
+backend/dist/
+backend/build/
+ml-services/*/dist/
+ml-services/*/build/
+ 
+# ---------------------------
+# Python
+# ---------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+ 
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+ 
+# Jupyter
+.ipynb_checkpoints
+ 
+# pyenv / pipenv / PEP 582
+.python-version
+Pipfile.lock
+__pypackages__/
+ 
+# mypy / pyre
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+ 
+# ---------------------------
+# Environment / Secrets
+# ---------------------------
+.env
+.env.*
+!.env.example
+.env.production
+ 
+# ---------------------------
+# Data & Large Artifacts
+# (Do NOT ignore source-code "models/" folders!)
+# Ignore only heavyweight model/data binaries by extension.
+# ---------------------------
+# ML model binaries
+*.pkl
+*.joblib
+*.h5
+*.hdf5
+*.ckpt
+*.pt
+*.pth
+*.bin
+*.onnx
+*.tflite
+*.model
+ 
+# Datasets / raw data (adjust if you need them tracked)
+data/
+datasets/
+ml-models/
+ 
+# If you still keep big binaries under any models/ directory, ignore by extension only:
+**/models/**/*.pkl
+**/models/**/*.joblib
+**/models/**/*.h5
+**/models/**/*.hdf5
+**/models/**/*.ckpt
+**/models/**/*.pt
+**/models/**/*.pth
+**/models/**/*.bin
+**/models/**/*.onnx
+**/models/**/*.tflite
+**/models/**/*.model
+ 
+# BUT always keep code inside models/ (JS/TS/PY/etc.)
+!**/models/**/*.js
+!**/models/**/*.ts
+!**/models/**/*.tsx
+!**/models/**/*.jsx
+!**/models/**/*.py
+ 
+# ---------------------------
+# Editors / IDE / OS
+# ---------------------------
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+ 
+# Vim / Emacs
+*.swp
+*.swo
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+ 
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+.AppleDouble
+.LSOverride
+ 
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+ 
+# Linux
+*~
+ 
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+ 
+# Docker
+.dockerignore
+ 
+# Databases / dumps
+*.db
+*.sqlite
+*.sqlite3
+dump.rdb
+ 
+# MkDocs
+/site

@@ -1,0 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.shadow-card {
+  @apply shadow-[0_2px_10px_rgba(47,94,172,0.08)];
+}

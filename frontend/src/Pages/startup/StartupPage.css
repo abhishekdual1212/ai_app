@@ -1,0 +1,14 @@
+.startup-page {
+    padding: 20px;
+    font-family: sans-serif;
+}
+
+.startup-page h1 {
+    text-align: center;
+    color: #444;
+}
+
+.components-container {
+    max-width: 800px;
+    margin: 0 auto;
+}

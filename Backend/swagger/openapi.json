@@ -1,0 +1,173 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Abyd Backend API",
+    "version": "1.0.0",
+    "description": "OpenAPI 3.0 spec for the Abyd backend (generated)." 
+  },
+  "servers": [
+    { "url": "http://localhost:3000" }
+  ],
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-api-key"
+      }
+    },
+    "schemas": {
+      "DirectOrder": {
+        "type": "object",
+        "properties": {
+          "orderNo": { "type": "string" },
+          "customerName": { "type": "string" },
+          "orderDate": { "type": "string", "format": "date" },
+          "status": { "type": "string" },
+          "type": { "type": "string" },
+          "chatId": { "type": "string" }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Health check",
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/api/documents/create": {
+      "post": {
+        "summary": "Create document",
+        "security": [{ "ApiKeyAuth": [] }],
+        "responses": { "200": { "description": "Document created" } }
+      }
+    },
+    "/api/documents/quick-generate": {
+      "post": {
+        "summary": "Quick generate document",
+        "security": [{ "ApiKeyAuth": [] }],
+        "responses": { "200": { "description": "Quick generate" } }
+      }
+    },
+    "/api/documents/{id}/status": {
+      "get": {
+        "summary": "Get document status",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "security": [{ "ApiKeyAuth": [] }],
+        "responses": { "200": { "description": "Status object" } }
+      }
+    },
+    "/api/intents/questions": {
+      "get": {
+        "summary": "Get intent questions by intentName query",
+        "parameters": [{ "name": "intentName", "in": "query", "required": true, "schema": { "type": "string" } }],
+        "security": [{ "ApiKeyAuth": [] }],
+        "responses": { "200": { "description": "Questions" }, "404": { "description": "Not found" } }
+      }
+    },
+    "/api/intents/{intentName}/price": {
+      "get": {
+        "summary": "Get price for intent",
+        "parameters": [{ "name": "intentName", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "security": [{ "ApiKeyAuth": [] }],
+        "responses": { "200": { "description": "Price info" } }
+      }
+    },
+    "/api/session/create": {
+      "post": {
+        "summary": "Create session",
+        "security": [{ "ApiKeyAuth": [] }],
+        "responses": { "200": { "description": "Created session" } }
+      }
+    },
+    "/api/session/{id}": {
+      "get": {
+        "summary": "Get session by id",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "security": [{ "ApiKeyAuth": [] }],
+        "responses": { "200": { "description": "Session" } }
+      }
+    },
+    "/api/session/user/{userId}": {
+      "get": {
+        "summary": "Get or create session by userId",
+        "parameters": [{ "name": "userId", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "security": [{ "ApiKeyAuth": [] }],
+        "responses": { "200": { "description": "Session" } }
+      }
+    },
+    "/api/search": {
+      "get": {
+        "summary": "Search legal catalog",
+        "parameters": [{ "name": "q", "in": "query", "schema": { "type": "string" } }],
+        "security": [{ "ApiKeyAuth": [] }],
+        "responses": { "200": { "description": "Search results" } }
+      }
+    },
+    "/api/direct-orders/ensure": {
+      "post": {
+        "summary": "Ensure direct order (create or update)",
+        "security": [{ "ApiKeyAuth": [] }],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object" } } } },
+        "responses": { "200": { "description": "Direct order ensured", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/DirectOrder" } } } } }
+      }
+    },
+    "/api/direct-orders/create": {
+      "post": { "summary": "Alias of /ensure", "security": [{ "ApiKeyAuth": [] }], "responses": { "200": { "description": "created" } } }
+    },
+    "/api/direct-orders/list": {
+      "get": {
+        "summary": "List direct orders",
+        "parameters": [
+          { "name": "uid", "in": "query", "required": true, "schema": { "type": "string" } },
+          { "name": "search", "in": "query", "schema": { "type": "string" } },
+          { "name": "page", "in": "query", "schema": { "type": "integer" } },
+          { "name": "pageSize", "in": "query", "schema": { "type": "integer" } }
+        ],
+        "security": [{ "ApiKeyAuth": [] }],
+        "responses": { "200": { "description": "Paged list" } }
+      }
+    },
+    "/api/direct-orders/by-chat": {
+      "get": {
+        "summary": "Get direct order by chat",
+        "parameters": [
+          { "name": "uid", "in": "query", "required": true, "schema": { "type": "string" } },
+          { "name": "chatId", "in": "query", "required": true, "schema": { "type": "string" } }
+        ],
+        "security": [{ "ApiKeyAuth": [] }],
+        "responses": { "200": { "description": "Direct order" } }
+      }
+    },
+    "/user/userRegister": {
+      "post": {
+        "summary": "Register a user",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object" } } } },
+        "responses": { "200": { "description": "User registered" } }
+      }
+    },
+    "/api/startup/orders": {
+      "post": { "summary": "Create startup order", "security": [{ "ApiKeyAuth": [] }], "responses": { "200": { "description": "Order created" } } }
+    },
+    "/api/startup/orders/{orderId}/answers": {
+      "put": {
+        "summary": "Replace answers for order",
+        "parameters": [
+          { "name": "orderId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "security": [{ "ApiKeyAuth": [] }],
+        "responses": { "200": { "description": "Answers replaced" } }
+      },
+      "patch": {
+        "summary": "Upsert single answer",
+        "parameters": [
+          { "name": "orderId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "security": [{ "ApiKeyAuth": [] }],
+        "responses": { "200": { "description": "Answer upserted" } }
+      }
+    }
+  }
+}
