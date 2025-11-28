@@ -1,0 +1,74 @@
+pipeline {
+    agent any
+
+    environment {
+        AWS_REGION       = "ap-south-1"
+        EKS_CLUSTER_NAME = "demo-eks"
+        ECR_ACCOUNT_ID   = "<YOUR_AWS_ACCOUNT_ID>"
+
+        FRONTEND_REPO = "${ECR_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/studynotion-frontend"
+        BACKEND_REPO  = "${ECR_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/studynotion-backend"
+    }
+
+    stages {
+
+        stage('Checkout Code') {
+            steps {
+                git branch: 'main',
+                    url: 'https://github.com/yourusername/yourrepo.git'
+            }
+        }
+
+        stage('Login to ECR') {
+            steps {
+                script {
+                    sh """
+                    aws ecr get-login-password --region ${AWS_REGION} \
+                        | docker login --username AWS --password-stdin ${ECR_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
+                    """
+                }
+            }
+        }
+
+        stage('Build Docker Images') {
+            steps {
+                sh """
+                docker build -t studynotion-frontend ./frontend
+                docker build -t studynotion-backend ./backend
+                """
+            }
+        }
+
+        stage('Tag & Push to ECR') {
+            steps {
+                sh """
+                docker tag studynotion-frontend:latest ${FRONTEND_REPO}:latest
+                docker tag studynotion-backend:latest ${BACKEND_REPO}:latest
+
+                docker push ${FRONTEND_REPO}:latest
+                docker push ${BACKEND_REPO}:latest
+                """
+            }
+        }
+
+        stage('Configure Kubeconfig') {
+            steps {
+                sh """
+                aws eks update-kubeconfig \
+                    --region ${AWS_REGION} \
+                    --name ${EKS_CLUSTER_NAME}
+                """
+            }
+        }
+
+        stage('Deploy to EKS') {
+            steps {
+                sh """
+                kubectl apply -f k8s/
+                kubectl rollout restart deployment/studynotion-frontend
+                kubectl rollout restart deployment/studynotion-backend
+                """
+            }
+        }
+    }
+}
