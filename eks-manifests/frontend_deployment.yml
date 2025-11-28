@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: shivagupta9765/abyd-legal-ai-fullstack-frontend:latest
+          image: 798373536376.dkr.ecr.us-east-1.amazonaws.com/ai_app/frontend
           ports:
             - containerPort: 80

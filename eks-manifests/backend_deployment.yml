@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: shivagupta9765/abyd-legal-ai-fullstack-backend:latest
+          image: 798373536376.dkr.ecr.us-east-1.amazonaws.com/ai_app/backend
           ports:
             - containerPort: 8080
           env:
